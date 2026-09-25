@@ -20,13 +20,19 @@
 #include "1_Middleware/1_Driver/CAN/drv_can.h"
 
 // 主循环轮询：控制与绘图独立；不是硬件定时器的严格实时周期。
-static const uint32_t CONTROL_PERIOD_MS = 10U;
+static const uint32_t CONTROL_PERIOD_MS = 1U;
 static const uint32_t PLOT_PERIOD_MS = 10U;
 static const uint32_t MOTOR_FEEDBACK_TIMEOUT_MS = 100U;
 static const bool ENABLE_MOTOR_3508 = false;
 static const bool ENABLE_MOTOR_6020 = true;
 static const float MOTOR_3508_CURRENT_LIMIT_A = 2.0f;
 static const float MOTOR_6020_CURRENT_LIMIT_A = 1.0f;
+// 旧版 GM6020 的电流 PID 输出是目标电压，必须使用电压单位限幅。
+static const float MOTOR_6020_VOLTAGE_LIMIT_V = 2.0f;
+static const float MOTOR_6020_CURRENT_I_OUT_LIMIT_V = 1.0f;
+// 参考 12_test_dji_motor_plus/test_6020_old_voltage 的电流环 PI 增益。
+static const float MOTOR_6020_CURRENT_KP = 1.0f;
+static const float MOTOR_6020_CURRENT_KI = 5000.0f;
 // 6020 电流环阶跃测试：每 3 s 按 0 -> +0.1 -> 0 -> -0.1 A 循环。
 static const uint32_t MOTOR_6020_STEP_HOLD_MS = 3000U;
 static const float MOTOR_6020_CURRENT_STEP_A[] = {0.0f, 0.1f, 0.0f, -0.1f};
@@ -214,15 +220,18 @@ void App_Motor_Init(void)
     // motor_6020.PID_Omega.Init(0.0f, 0.0f, 0.0f, 0.0f,
     //                           0.0f, MOTOR_6020_CURRENT_LIMIT_A,
     //                           CONTROL_PERIOD_MS * 0.001f);
-    motor_6020.PID_Current.Init(0.0f, 0.0f, 0.0f, 0.0f,
-                              0.0f, MOTOR_6020_CURRENT_LIMIT_A,
+    motor_6020.PID_Current.Init(MOTOR_6020_CURRENT_KP,
+                              MOTOR_6020_CURRENT_KI,
+                              0.0f, 0.0f,
+                              MOTOR_6020_CURRENT_I_OUT_LIMIT_V,
+                              MOTOR_6020_VOLTAGE_LIMIT_V,
                               CONTROL_PERIOD_MS * 0.001f);
     motor_6020.Init(&hcan1, Motor_DJI_ID_0x209,
                     Motor_DJI_Control_Method_CURRENT, 
                     0.0,
                     Motor_DJI_GM6020_Driver_Version_DEFAULT,
                     Motor_DJI_Power_Limit_Status_DISABLE,
-                    2.0f,
+                    MOTOR_6020_VOLTAGE_LIMIT_V,
                     MOTOR_6020_CURRENT_LIMIT_A);
     // 不带括号的 CAN_Motor_Callback 是把函数地址交出去，此处不是执行回调。
     // drv_can.cpp 会把它存入 CAN1_Manage_Object.Callback_Function，收到帧才执行。
