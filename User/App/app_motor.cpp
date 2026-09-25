@@ -27,7 +27,16 @@ static const bool ENABLE_MOTOR_3508 = false;
 static const bool ENABLE_MOTOR_6020 = true;
 static const float MOTOR_3508_CURRENT_LIMIT_A = 2.0f;
 static const float MOTOR_6020_CURRENT_LIMIT_A = 1.0f;
+// 6020 电流环阶跃测试：每 3 s 按 0 -> +0.1 -> 0 -> -0.1 A 循环。
+static const uint32_t MOTOR_6020_STEP_HOLD_MS = 3000U;
+static const float MOTOR_6020_CURRENT_STEP_A[] = {0.0f, 0.1f, 0.0f, -0.1f};
+static const uint8_t MOTOR_6020_CURRENT_STEP_COUNT =
+    static_cast<uint8_t>(sizeof(MOTOR_6020_CURRENT_STEP_A) /
+                         sizeof(MOTOR_6020_CURRENT_STEP_A[0]));
 static uint32_t last_control_tick, last_plot_tick;
+static uint32_t motor_6020_step_tick;
+static uint8_t motor_6020_step_index = 0U;
+static bool motor_6020_was_online = false;
 volatile uint32_t motor_control_missed_periods = 0;
 
 static Class_Motor_DJI_C620 motor_3508;
@@ -224,6 +233,9 @@ void App_Motor_Init(void)
     serialplot.Init(&huart1, VARIABLE_ASSIGNMENT_COUNT,
                     (char **)Variable_Assignment_List);
     last_control_tick = last_plot_tick = HAL_GetTick();
+    motor_6020_step_tick = last_control_tick;
+    motor_6020_step_index = 0U;
+    motor_6020_was_online = false;
     motor_control_missed_periods = 0;
 
     // 对象及参数准备完后，最后启动接收，避免中断访问未初始化对象。
@@ -271,16 +283,42 @@ void App_Motor_Poll(void)
         {
             if (motor_6020_online)
             {
-                motor_6020.Set_Control_Method(Motor_DJI_Control_Method_OMEGA);
-                motor_6020.Set_Target_Omega(Target_Omega_6020);
+                // 刚恢复反馈时，从 0 A 阶段重新开始，避免一上线就突然给正/负电流。
+                if (!motor_6020_was_online)
+                {
+                    motor_6020_step_tick = now;
+                    motor_6020_step_index = 0U;
+                }
+
+                const uint32_t step_elapsed =
+                    (uint32_t)(now - motor_6020_step_tick);
+                if (step_elapsed >= MOTOR_6020_STEP_HOLD_MS)
+                {
+                    const uint32_t passed_steps =
+                        step_elapsed / MOTOR_6020_STEP_HOLD_MS;
+                    motor_6020_step_tick +=
+                        passed_steps * MOTOR_6020_STEP_HOLD_MS;
+                    motor_6020_step_index = static_cast<uint8_t>(
+                        (motor_6020_step_index + passed_steps) %
+                        MOTOR_6020_CURRENT_STEP_COUNT);
+                }
+
+                motor_target_current_a =
+                    MOTOR_6020_CURRENT_STEP_A[motor_6020_step_index];
+                motor_6020.Set_Control_Method(Motor_DJI_Control_Method_CURRENT);
+                motor_6020.Set_Target_Current(motor_target_current_a);
+                motor_6020.TIM_Calculate_PeriodElapsedCallback();
             }
-           else
-           {
-               motor_6020.Set_Control_Method(Motor_DJI_Control_Method_CURRENT);
-               motor_6020.Set_Target_Current(0.0f);
-               motor_6020.PID_Current.Set_Integral_Error(0.0f);
-           }
-           motor_6020.TIM_Calculate_PeriodElapsedCallback();
+            else
+            {
+                // 反馈超时立即清零，并计算一次 0 输出，防止继续发送旧控制量。
+                motor_target_current_a = 0.0f;
+                motor_6020.Set_Control_Method(Motor_DJI_Control_Method_CURRENT);
+                motor_6020.Set_Target_Current(0.0f);
+                motor_6020.PID_Current.Set_Integral_Error(0.0f);
+                motor_6020.TIM_Calculate_PeriodElapsedCallback();
+            }
+            motor_6020_was_online = motor_6020_online;
 
             // 0x209反馈ID + 2023电流驱动，对应0x2FF控制帧的前两个字节。
             if (CAN_Send_Data(&hcan1, 0x2FF, CAN1_0x2ff_Tx_Data, 8) != HAL_OK)
