@@ -1,0 +1,58 @@
+{
+    "configurations": [
+        {
+            "name": "can_motor_test",
+            "includePath": [
+                "${workspaceFolder}/Core/Inc",
+                "${workspaceFolder}/Core/Src",
+                "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc",
+                "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
+                "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Src",
+                "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
+                "${workspaceFolder}/Drivers/CMSIS/Include",
+                "${workspaceFolder}/Drivers/CMSIS/DSP/Include",
+                "${workspaceFolder}/User",
+                "${workspaceFolder}/User/**",
+                "${workspaceFolder}/MDK-ARM",
+                "D:/keil5/ARM/ARMCC/include",
+                "D:/keil5/ARM/ARMCC/include/rw"
+            ],
+            "defines": [
+                "USE_HAL_DRIVER",
+                "STM32F407xx",
+                "__CC_ARM",
+                "__arm__",
+                "__align(x)=",
+                "__ALIGNOF__(x)=",
+                "__alignof__(x)=",
+                "__asm(x)=",
+                "__forceinline=",
+                "__restrict=",
+                "__inline=",
+                "__int64=long long",
+                "__irq=",
+                "__packed=",
+                "__pure=",
+                "__weak=",
+                "__writeonly=",
+                "__declspec(x)=",
+                "__attribute__(x)=",
+                "__nonnull__(x)=",
+                "__register="
+            ],
+            "cStandard": "c99",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "${default}",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/Core",
+                    "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver",
+                    "${workspaceFolder}/Drivers/CMSIS",
+                    "${workspaceFolder}/User"
+                ],
+                "limitSymbolsToIncludedHeaders": false
+            }
+        }
+    ],
+    "version": 4
+}

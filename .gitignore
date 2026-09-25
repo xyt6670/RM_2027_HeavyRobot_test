@@ -1,0 +1,40 @@
+# Keil MDK build output
+/MDK-ARM/can_motor_test/
+/MDK-ARM/*-build.log
+/MDK-ARM/*.log
+/MDK-ARM/*.lst
+
+# Keil per-user UI state (breakpoints, window layout, recent files)
+/MDK-ARM/*.uvguix.*
+
+# ARM compiler/linker generated files
+*.o
+*.d
+*.crf
+*.axf
+*.elf
+*.hex
+*.bin
+*.map
+*.lnp
+*.dep
+*.build_log.htm
+
+# VS Code generated indexes and caches; keep workspace JSON settings
+/.vscode/ipch/
+/.vscode/.browse.c_cpp.db*
+/.vscode/*.log
+/MDK-ARM/.vscode/*.log*
+/MDK-ARM/.vscode/*.lock
+
+# Local backup and temporary files
+/backups/
+*.bak
+*.tmp
+*.orig
+*~
+
+# Windows/macOS metadata
+Thumbs.db
+Desktop.ini
+.DS_Store
