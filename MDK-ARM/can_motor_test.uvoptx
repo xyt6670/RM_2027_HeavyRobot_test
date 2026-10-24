@@ -148,40 +148,7 @@
           <Name>-U-O142 -O2254 -SF10000 -C0 -A0 -I0 -HNlocalhost -HP7184 -P1 -N00("ARM CoreSight SW-DP (ARM Core") -D00(2BA01477) -L00(0) -TO131090 -TC10000000 -TT10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC800 -FN1 -FF0STM32F4xx_1024.FLM -FS08000000 -FL0100000 -FP0($$Device:STM32F407IGHx$CMSIS\Flash\STM32F4xx_1024.FLM) -WA0 -WE0 -WVCE4 -WS2710 -WM0 -WP2 -WK0-R0</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint>
-        <Bp>
-          <Number>0</Number>
-          <Type>0</Type>
-          <LineNumber>286</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>134219468</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../User/App/app_motor.cpp</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\can_motor_test\../User/App/app_motor.cpp\286</Expression>
-        </Bp>
-        <Bp>
-          <Number>1</Number>
-          <Type>0</Type>
-          <LineNumber>287</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>0</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>0</BreakIfRCount>
-          <Filename>../User/App/app_motor.cpp</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression></Expression>
-        </Bp>
-      </Breakpoint>
+      <Breakpoint/>
       <WatchWindow1>
         <Ww>
           <count>0</count>
@@ -263,7 +230,49 @@
           <WinNumber>1</WinNumber>
           <ItemText>\\can_motor_test\../User/1_Middleware/1_Driver/CAN/drv_can.cpp\CAN1_0x2ff_Tx_Data</ItemText>
         </Ww>
+        <Ww>
+          <count>16</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_6020.Feedforward_Voltage</ItemText>
+        </Ww>
+        <Ww>
+          <count>17</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_6020.Target_Voltage</ItemText>
+        </Ww>
+        <Ww>
+          <count>18</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_3508_online</ItemText>
+        </Ww>
+        <Ww>
+          <count>19</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_3508_rx_count</ItemText>
+        </Ww>
+        <Ww>
+          <count>20</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_3508.PID_Omega.K_P</ItemText>
+        </Ww>
+        <Ww>
+          <count>21</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_6020.PID_Current.K_P</ItemText>
+        </Ww>
+        <Ww>
+          <count>22</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_6020.PID_Current.K_I</ItemText>
+        </Ww>
       </WatchWindow1>
+      <WatchWindow2>
+        <Ww>
+          <count>0</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_3508.PID_Omega.K_P</ItemText>
+        </Ww>
+      </WatchWindow2>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>

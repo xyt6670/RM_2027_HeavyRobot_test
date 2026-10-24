@@ -63,7 +63,7 @@ void UART_Init(UART_HandleTypeDef *huart, UART_Call_Back Callback_Function, uint
 
 uint8_t UART_Send_Data(UART_HandleTypeDef *huart, uint8_t *Data, uint16_t Length);
 
-void TIM_UART_PeriodElapsedCallback();
+uint8_t TIM_UART_PeriodElapsedCallback();
 
 #endif
 

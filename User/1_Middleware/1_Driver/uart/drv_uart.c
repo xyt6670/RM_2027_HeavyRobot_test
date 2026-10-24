@@ -100,10 +100,11 @@ uint8_t UART_Send_Data(UART_HandleTypeDef *huart, uint8_t *Data, uint16_t Length
  * @brief UART的TIM定时器中断发送回调函数
  *
  */
-void TIM_UART_PeriodElapsedCallback()
+uint8_t TIM_UART_PeriodElapsedCallback()
 {
-    // 本应用USART1输出两个float通道：1字节帧头 + 8字节数据。
-    UART_Send_Data(&huart1, UART1_Manage_Object.Tx_Buffer, 1 + 4 * sizeof(float));
+    // 本应用USART1输出四个float通道：1字节帧头 + 16字节数据。
+    return UART_Send_Data(&huart1, UART1_Manage_Object.Tx_Buffer,
+                          1 + 4 * sizeof(float));
 }
 
 /**

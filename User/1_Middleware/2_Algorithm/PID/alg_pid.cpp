@@ -136,32 +136,35 @@ void Class_PID::TIM_Calculate_PeriodElapsedCallback()
             speed_ratio = 0.0f;
         }
     }
-    // 积分限幅
-    if (I_Out_Max != 0.0f)
+    // Ki 为 0 时不积分，避免 I_Out_Max / Ki 除零，也避免重新启用
+    // Ki 时突然恢复之前累积的积分。
+    if (K_I == 0.0f)
     {
-        Math_Constrain(&Integral_Error, -I_Out_Max / K_I, I_Out_Max / K_I);
-    }
-    if (I_Separate_Threshold == 0.0f)
-    {
-        // 没有积分分离
-        Integral_Error += speed_ratio * D_T * error;
-        i_out = K_I * Integral_Error;
+        Integral_Error = 0.0f;
+        i_out = 0.0f;
     }
     else
     {
-        // 有积分分离
-        if (abs_error < I_Separate_Threshold)
+        if (I_Separate_Threshold == 0.0f ||
+            abs_error < I_Separate_Threshold)
         {
-            // 不在积分分离区间上
             Integral_Error += speed_ratio * D_T * error;
-            i_out = K_I * Integral_Error;
         }
         else
         {
-            // 在积分分离区间上
+            // 误差超过积分分离阈值时清除积分。
             Integral_Error = 0.0f;
-            i_out = 0.0f;
         }
+
+        // 先更新积分再限幅，保证本次积分输出也不会越界。
+        if (I_Out_Max != 0.0f)
+        {
+            const float integral_error_max = Math_Abs(I_Out_Max / K_I);
+            Math_Constrain(&Integral_Error,
+                           -integral_error_max,
+                           integral_error_max);
+        }
+        i_out = K_I * Integral_Error;
     }
 
     // 计算d项
