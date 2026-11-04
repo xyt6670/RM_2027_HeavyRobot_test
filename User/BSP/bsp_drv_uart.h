@@ -1,5 +1,5 @@
 /**
- * @file drv_uart.h
+ * @file bsp_drv_uart.h
  * @author yssickjgd (1345578933@qq.com)
  * @brief 仿照SCUT-Robotlab改写的UART通信初始化与配置流程
  * @version 0.1
@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef DRV_UART_H
-#define DRV_UART_H
+#ifndef BSP_DRV_UART_H
+#define BSP_DRV_UART_H
 
 /* Includes ------------------------------------------------------------------*/
 

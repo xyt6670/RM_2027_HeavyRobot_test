@@ -9,15 +9,15 @@
  *
  */
 
-#ifndef DVC_SERIALPLOT_H
-#define DVC_SERIALPLOT_H
+#ifndef DEVICE_SERIALPLOT_H
+#define DEVICE_SERIALPLOT_H
 
 /* Includes ------------------------------------------------------------------*/
 
 #include <stdarg.h>
 #include <string.h>
 #include <math.h>
-#include "drv_uart.h"
+#include "bsp_drv_uart.h"
 
 /* Exported macros -----------------------------------------------------------*/
 

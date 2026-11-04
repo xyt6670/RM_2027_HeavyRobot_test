@@ -1,15 +1,20 @@
 {
-    "cmake.sourceDirectory": "C:/Users/xyt20/Desktop/STM32Project/can_motor_test/Drivers/CMSIS/NN",
     "C_Cpp.intelliSenseEngine": "default",
     "clangd.enable": false,
     "stm32cube-ide-clangd.enable": false,
     "files.associations": {
-        "drv_uart.c": "cpp",
-        "drv_uart.h": "cpp",
-        "dvc_serialplot.h": "cpp",
-        "dvc_motor_dji.h": "cpp",
-        "alg_pid.h": "cpp"
+        "bsp_drv_can.h": "cpp",
+        "bsp_drv_uart.h": "cpp",
+        "device_motor_dji.h": "cpp",
+        "device_motor_dm.h": "cpp",
+        "device_serialplot.h": "cpp",
+        "control_alg_pid.h": "cpp",
+        "control_alg_math.h": "cpp"
     },
     "C_Cpp.default.cStandard": "c99",
-    "C_Cpp.default.cppStandard": "c++11"
+    "C_Cpp.default.cppStandard": "c++11",
+    "files.exclude": {
+        "**/*.uvguix.*": true,
+        "**/*.lst": true
+    }
 }

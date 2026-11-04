@@ -1,4 +1,5 @@
 # Keil MDK build output
+/Build/
 /MDK-ARM/can_motor_test/
 /MDK-ARM/*-build.log
 /MDK-ARM/*.log

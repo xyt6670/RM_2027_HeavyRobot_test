@@ -1,5 +1,5 @@
 /**
- * @file alg_pid.h
+ * @file control_alg_pid.h
  * @author yssickjgd (1345578933@qq.com)
  * @brief PID算法
  * @version 0.1
@@ -9,12 +9,12 @@
  *
  */
 
-#ifndef ALG_PID_H
-#define ALG_PID_H
+#ifndef CONTROL_ALG_PID_H
+#define CONTROL_ALG_PID_H
 
 /* Includes ------------------------------------------------------------------*/
 
-#include "1_Middleware/1_Driver/Math/drv_math.h"
+#include "control_alg_math.h"
 
 /* Exported macros -----------------------------------------------------------*/
 

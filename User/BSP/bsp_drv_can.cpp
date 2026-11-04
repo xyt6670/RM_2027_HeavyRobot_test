@@ -1,5 +1,5 @@
 /**
- * @file drv_can.cpp
+ * @file bsp_drv_can.cpp
  * @author yssickjgd (1345578933@qq.com)
  * @brief 仿照SCUT-Robotlab改写的CAN通信初始化与配置流程
  * @version 1.3
@@ -16,7 +16,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-#include "drv_can.h"
+#include "bsp_drv_can.h"
 
 /* Private macros ------------------------------------------------------------*/
 

@@ -4,18 +4,16 @@
             "name": "can_motor_test",
             "includePath": [
                 "${workspaceFolder}/Core/Inc",
-                "${workspaceFolder}/Core/Src",
                 "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc",
                 "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy",
-                "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Src",
                 "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
                 "${workspaceFolder}/Drivers/CMSIS/Include",
                 "${workspaceFolder}/Drivers/CMSIS/DSP/Include",
                 "${workspaceFolder}/User",
-                "${workspaceFolder}/User/**",
-                "${workspaceFolder}/MDK-ARM",
-                "D:/keil5/ARM/ARMCC/include",
-                "D:/keil5/ARM/ARMCC/include/rw"
+                "${workspaceFolder}/User/BSP",
+                "${workspaceFolder}/User/Device",
+                "${workspaceFolder}/User/Control",
+                "${workspaceFolder}/User/App"
             ],
             "defines": [
                 "USE_HAL_DRIVER",
@@ -46,8 +44,7 @@
             "browse": {
                 "path": [
                     "${workspaceFolder}/Core",
-                    "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver",
-                    "${workspaceFolder}/Drivers/CMSIS",
+                    "${workspaceFolder}/Drivers",
                     "${workspaceFolder}/User"
                 ],
                 "limitSymbolsToIncludedHeaders": false

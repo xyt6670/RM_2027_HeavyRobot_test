@@ -24,11 +24,7 @@
 #include "gpio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "App/app_motor.h"
-
-//#include "2_Device/Motor/Motor_DJI/dvc_motor_dji.h"
-//#include "drv_can.h"
-/* UART驱动及绘图对象在C++应用层初始化，main保持C接口。 */
+#include "app_robot.h"
 
 /* USER CODE END Includes */
 
@@ -98,7 +94,7 @@ int main(void)
   MX_CAN2_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  App_Motor_Init();
+  App_Robot_Init();
   
   /* USER CODE END 2 */
 
@@ -106,8 +102,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    App_Motor_Poll();
-    /* App内部按HAL_GetTick独立调度控制/绘图，无需再阻塞延时。 */
+    App_Robot_Poll();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

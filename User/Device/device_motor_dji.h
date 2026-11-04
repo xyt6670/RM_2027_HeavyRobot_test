@@ -1,5 +1,5 @@
 /**
- * @file dvc_motor_dji.h
+ * @file device_motor_dji.h
  * @author yssickjgd (1345578933@qq.com)
  * @brief 大疆电机配置与操作
  * @version 1.2
@@ -11,13 +11,13 @@
  *
  */
 
-#ifndef DVC_MOTOR_DJI_H
-#define DVC_MOTOR_DJI_H
+#ifndef DEVICE_MOTOR_DJI_H
+#define DEVICE_MOTOR_DJI_H
 
 /* Includes ------------------------------------------------------------------*/
 
-#include "1_Middleware/2_Algorithm/PID/alg_pid.h"
-#include "1_Middleware/1_Driver/CAN/drv_can.h"
+#include "control_alg_pid.h"
+#include "bsp_drv_can.h"
 
 /* Exported macros -----------------------------------------------------------*/
 

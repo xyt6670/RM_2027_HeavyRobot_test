@@ -1,5 +1,5 @@
 /**
- * @file drv_math.cpp
+ * @file control_alg_math.cpp
  * @author yssickjgd 1345578933@qq.com
  * @brief 一些数学
  * @version 1.1
@@ -12,13 +12,13 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-#include "drv_math.h"
+#include "control_alg_math.h"
 /*
  * 【中文导读 5/5：辅助工具箱】这里不是 ARM 官方 arm_math 的源文件，是中科大的封装。
  * 电机 Data_Process -> Math_Endian_Reverse_16：把反馈中的高低字节换成 MCU 数值。
- * PID/电机还调用 Math_Abs、Math_Constrain：这些模板实现在 drv_math.h，请去头文件找。
- * drv_math.h 包含 arm_math.h；本文件 Math_Sinc 使用 CMSIS-DSP 的 arm_sin_f32。
- * 电机的功率限制还使用 arm_sqrt_f32；PID 的主要计算由 alg_pid.cpp 自己实现。
+ * PID/电机还调用 Math_Abs、Math_Constrain：这些模板实现在 control_alg_math.h，请去头文件找。
+ * control_alg_math.h 包含 arm_math.h；本文件 Math_Sinc 使用 CMSIS-DSP 的 arm_sin_f32。
+ * 电机的功率限制还使用 arm_sqrt_f32；PID 的主要计算由 control_alg_pid.cpp 自己实现。
  * 求和、32位换序、映射等都是备用工具，不表示当前3508每个周期都会执行它们。
  */
 

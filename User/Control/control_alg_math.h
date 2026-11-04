@@ -1,5 +1,5 @@
 /**
- * @file drv_math.h
+ * @file control_alg_math.h
  * @author yssickjgd 1345578933@qq.com
  * @brief 一些数学
  * @version 0.1
@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef DRV_MATH_H
-#define DRV_MATH_H
+#ifndef CONTROL_ALG_MATH_H
+#define CONTROL_ALG_MATH_H
 
 /* Includes ------------------------------------------------------------------*/
 

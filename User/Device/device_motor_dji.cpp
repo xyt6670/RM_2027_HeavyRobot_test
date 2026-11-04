@@ -1,5 +1,5 @@
 /**
- * @file dvc_motor_dji.cpp
+ * @file device_motor_dji.cpp
  * @author yssickjgd (1345578933@qq.com)
  * @brief 大疆电机配置与操作
  * @version 1.2
@@ -13,20 +13,20 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-#include "dvc_motor_dji.h"
+#include "device_motor_dji.h"
 /*
  * 【中文导读 3/5：电机设备层】识别 DJI 协议，管理每个电机的反馈和控制状态。
  * 本文件有三个类：GM6020、C610、C620。当前 App 创建了 GM6020 和 C620 两个对象。
  * 当前先搜索“void Class_Motor_DJI_GM6020::Init”，从 6020 新版电流驱动链路开始读。
  *
- * 初始化：app_motor.cpp -> C620::Init -> allocate_tx_data -> 绑定 drv_can 的发送数组。
- * 接收：drv_can -> app_motor.cpp 分发 -> C620::CAN_RxCpltCallback -> Data_Process
- *       -> drv_math.cpp 换字节序 -> 结果存入当前电机对象的 Rx_Data。
- * 输出：app_motor.cpp -> C620::TIM_Calculate_PeriodElapsedCallback -> PID_Calculate
+ * 初始化：上层初始化入口 -> C620::Init -> allocate_tx_data -> 绑定BSP发送数组。
+ * 接收：BSP CAN -> 上层按ID分发 -> C620::CAN_RxCpltCallback -> Data_Process
+ *       -> control_alg_math.cpp 换字节序 -> 结果存入当前电机对象的 Rx_Data。
+ * 输出：上层周期调用 -> C620::TIM_Calculate_PeriodElapsedCallback -> PID_Calculate
  *       -> 电流限幅/换算 -> Output 填两个字节 -> 返回 App -> CAN_Send_Data 真正发帧。
  *
  * “Class_Motor_DJI_C620::某函数”就是这个类的成员函数实现；对象.某函数() 会执行它。
- * 成员变量和 Get/Set 的短函数在 dvc_motor_dji.h；成员数据属于具体电机对象。
+ * 成员变量和 Get/Set 的短函数在 device_motor_dji.h；成员数据属于具体电机对象。
  * 本文件 Output 只写 RAM，不会自己启动 CAN 发送。
  */
 
@@ -874,7 +874,7 @@ void Class_Motor_DJI_C610::Output()
  */
 void Class_Motor_DJI_C620::Init(CAN_HandleTypeDef *hcan, Enum_Motor_DJI_ID __CAN_Rx_ID, Enum_Motor_DJI_Control_Method __Motor_DJI_Control_Method, float __Gearbox_Rate, Enum_Motor_DJI_Power_Limit_Status __Power_Limit_Status, float __Current_Max)
 {
-    // 【当前3508从这里开始读】调用者：app_motor.cpp 的 App_Motor_Init。
+    // 3508/C620初始化入口；由上层在启动接收前创建并初始化电机对象。
     // Init 是作者写的普通成员函数，不是 C++ 构造函数，不会在对象创建时自动执行。
     // CAN_Manage_Object 是本电机的指针成员；下面让它指向 drv_can 的 CAN1/2 管理对象。
     // 本函数只绑定数据与参数，CAN 的硬件启动随后由 App 调用 CAN_Init 完成。
@@ -901,7 +901,7 @@ void Class_Motor_DJI_C620::Init(CAN_HandleTypeDef *hcan, Enum_Motor_DJI_ID __CAN
  */
 void Class_Motor_DJI_C620::CAN_RxCpltCallback(uint8_t *Rx_Data)
 {
-    // 调用者：app_motor.cpp 的 CAN_Motor_Callback，已确认帧 ID=0x204、DLC=8。
+    // 调用者应先确认该电机的反馈ID、帧类型与DLC=8，再分发到此处。
     // 原库形参 Rx_Data 未使用！Data_Process 从绑定的 CAN 管理对象中读取同一帧。
     // 因此不能随便传一段测试字节就期待解析它；这是当前库的实际耦合关系。
     // 滑动窗口, 判断电机是否在线
@@ -942,8 +942,8 @@ void Class_Motor_DJI_C620::TIM_100ms_Alive_PeriodElapsedCallback()
  */
 void Class_Motor_DJI_C620::TIM_Calculate_PeriodElapsedCallback()
 {
-    // 调用者：App_Motor_Poll。先算控制目标，再转协议单位，最后只填发送数组。
-    // 当前 CURRENT 模式的 PID_Calculate 不做 PID，直接使用 Set_Target_Current 保存的 A 值。
+    // 由上层周期调用。先算控制目标，再转协议单位，最后只填发送数组。
+    // CURRENT模式不做速度/角度PID，直接使用Set_Target_Current保存的A值。
     PID_Calculate();
 
     float tmp_value = Target_Current + Feedforward_Current;
@@ -1034,8 +1034,8 @@ void Class_Motor_DJI_C620::PID_Calculate()
 {
     // 调用者：本类 TIM_Calculate_PeriodElapsedCallback。
     // CURRENT：直接用目标电流；OMEGA：速度PID产生电流；ANGLE：角度PID先产生目标速度。
-    // 在 OMEGA/ANGLE 分支中，PID_Omega.TIM_Calculate... 跳转到 alg_pid.cpp。
-    // PID_Omega.Set_Target/Set_Now/Get_Out 等短函数则在 alg_pid.h 里。
+    // 在 OMEGA/ANGLE 分支中，PID_Omega.TIM_Calculate... 跳转到 control_alg_pid.cpp。
+    // PID_Omega.Set_Target/Set_Now/Get_Out 等短函数则在 control_alg_pid.h 里。
     switch (Motor_DJI_Control_Method)
     {
     case (Motor_DJI_Control_Method_CURRENT):
@@ -1150,8 +1150,8 @@ void Class_Motor_DJI_C620::Power_Limit_Control()
  */
 void Class_Motor_DJI_C620::Output()
 {
-    // Tx_Data 在 Init 中绑定；本工程1号电机：Tx_Data == &CAN1_0x200_Tx_Data[0]。
-    // 因而这里写的两个字节，会被 app_motor.cpp 随后 CAN_Send_Data 发出去。
+    // Tx_Data在Init中按总线和反馈ID绑定到相应的两字节发送槽位。
+    // 上层统一组帧后调用CAN_Send_Data；写数组本身不会提交CAN报文。
     // Out 已是协议数值；右移8位取高字节，赋给 uint8_t 保留低8位。
     Tx_Data[0] = (int16_t) Out >> 8;
     Tx_Data[1] = (int16_t) Out;

@@ -1,5 +1,5 @@
 /**
- * @file alg_pid.cpp
+ * @file control_alg_pid.cpp
  * @author yssickjgd 1345578933@qq.com
  * @brief PID算法
  * @version 0.1
@@ -11,15 +11,14 @@
 
 /* Includes ------------------------------------------------------------------*/
 
-#include "alg_pid.h"
+#include "control_alg_pid.h"
 /*
  * 【中文导读 4/5：PID计算器】本文件不配置 CAN，也不发送报文。
  * Class_PID 是类型；电机类中的 PID_Angle、PID_Omega 是两个独立的 PID 对象。
  * 电机 cpp 的 PID_Calculate 在速度/角度模式下给 PID 设置 Target、Now，再调用计算函数。
- * 计算函数把结果存入本对象 Out，调用方通过 Get_Out() 取出。Get/Set 定义在 alg_pid.h。
- * 当前 app_motor.cpp 选择 CURRENT 模式：电机 PID_Calculate 直接跳过闭环计算，
- * 所以当前没有调用这里的周期 PID 计算，也没有初始化速度/角度 PID 参数。
- * 将来做速度控制，再学习 motor_3508.PID_Omega.Init(...) 及固定计算周期 D_T。
+ * 计算函数把结果存入本对象 Out，调用方通过 Get_Out() 取出。Get/Set 定义在 control_alg_pid.h。
+ * 电流模式与速度/角度模式是否执行PID，由电机类中的控制方式决定。
+ * 上层实例化电机并选择速度/角度控制时，应先初始化对应PID参数与计算周期D_T。
  */
 
 /* Private macros ------------------------------------------------------------*/
