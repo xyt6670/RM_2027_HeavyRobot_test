@@ -1,0 +1,22 @@
+{
+  "baseline": "8a2aa35a0c0341dc65a08a82c8201af0cb825460",
+  "passed": true,
+  "checks": {
+    "head_still_8a2_no_commit": true,
+    "no_staged_changes": true,
+    "motor_and_control_unchanged": true,
+    "no_service_or_boardremote": true,
+    "keil_pass": true,
+    "host_pass": true,
+    "svg_no_overflow": true,
+    "keil_source_app_init.cpp": true,
+    "keil_source_app_remote.cpp": true,
+    "keil_source_device_dr16.cpp": true,
+    "no_old_c_source_entries": true,
+    "app_remote_no_hal_bsp_headers": true,
+    "app_robot_no_hal_bsp_headers": true,
+    "diff_check": true
+  },
+  "hardware_verified": false,
+  "note": "Keil compile + host mock only; no flash; no commit. User supplies commit name."
+}

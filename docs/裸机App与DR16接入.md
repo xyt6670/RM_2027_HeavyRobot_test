@@ -1,5 +1,7 @@
 # 裸机App职责与DR16接入现状
 
+> 历史骨架说明：本文后续“尚未接收”的描述属于8a2aa35基线。当前练习已集中到app_init＋Class_DR16，实际接线、调用链和验证以[DR16类练习](DR16类练习_调用链与验收.md)为准；未恢复Service。
+
 ## 参考北林时取什么
 
 北林2025英雄的app_init.c集中初始化，app_remote.c中的Remote_ControlCom解释拨杆和键鼠，再设置各模块目标；app_chassis.c等把控制与输出组织起来。它用RTOS任务周期调用这些函数。本工程借鉴职责划分，不复制Remote_Task、osDelay、线程入口，也不把其尚未运行的任务误认为已经启用。

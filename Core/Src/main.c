@@ -25,6 +25,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "app_robot.h"
+#include "app_init.h"
+#include "bsp_drv_uart.h"
 
 /* USER CODE END Includes */
 
@@ -93,8 +95,9 @@ int main(void)
   MX_CAN1_Init();
   MX_CAN2_Init();
   MX_USART1_UART_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
-  App_Robot_Init();
+  App_Init();
   
   /* USER CODE END 2 */
 
@@ -102,7 +105,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    App_Robot_Poll();
+    UART_Poll();//维护UART接收DMA的运行状态，若未运行则重启
+    App_Robot_Poll(HAL_GetTick());//维护机器人对象的运行状态，若有需要则执行控制算法
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

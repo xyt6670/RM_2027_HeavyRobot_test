@@ -1,0 +1,27 @@
+digraph remote {
+ graph [rankdir=TB, newrank=true, bgcolor="white", pad=.3, nodesep=.4, ranksep=.55, fontname="Microsoft YaHei", fontsize=22, label="实际代码：app_init装配一个DR16对象\n裸机，只观察输入，不接电机", labelloc=t];
+ node [shape=box, style="rounded,filled", fillcolor="#eef4f7", color="#829ba9", fontname="Microsoft YaHei", fontsize=18, width=6.5, margin=".3,.2"];
+ edge [fontname="Microsoft YaHei", fontsize=15, color="#346d8b", arrowsize=.75];
+ init [label="main完成硬件初始化 → App_Init\nremote.Init → App_Remote_Init(remote)\nApp_Robot_Init(now)\n最后UART_Init(&huart3, Remote_RxCallback, 36)", fillcolor="#fff0dc"];
+ subgraph cluster_rx {
+  label="有数据时：接收中断链"; color="#9ab6c1"; style=dashed;
+  uart [label="DR16 → C板DBUS → PC11/USART3\nDMA写BSP缓存；IDLE或满36字节TC"];
+  bsp [label="HAL中断处理 → BSP接收事件回调\n忽略HT；调用保存的Callback_Function"];
+  bridge [label="app_init.cpp：Remote_RxCallback\nremote.UART_RxCpltCallback(data, len, time)\n桥接函数不重启DMA、不做映射"];
+  device [label="Class_DR16：长度与字段检查\n有效帧才更新私有数据和有效时间\n无效帧只增加错误计数", fillcolor="#e8f2e0"];
+  restart [label="返回BSP，重新准备NORMAL DMA\n成功后关闭HT；错误后由UART_Poll恢复"];
+  uart -> bsp -> bridge -> device -> restart;
+ }
+ subgraph cluster_main {
+  label="持续运行：main主循环链"; color="#c4a474"; style=dashed;
+  poll [label="UART_Poll：维护已初始化串口接收\nApp_Robot_Poll(now)：约每1ms更新输入", fillcolor="#fff0dc"];
+  update [label="App_Remote_Update → 同一个remote对象\nUpdate：内部保护后取时间，判断100ms超时\nGetSnapshot：内部保护复制，再恢复中断"];
+  map [label="App使用本轮快照\n原始值−1024 → ±10死区 → -1～1\n离线归一化输出强制0", fillcolor="#fff0dc"];
+  watch [label="Keil Watch1：g_remote_debug\nch0/ch1原始、居中、归一化\ns1/s2、online、有效帧和掉线次数", fillcolor="#e8f2e0"];
+  poll -> update -> map -> watch;
+ }
+ init -> uart [label="等待输入"];
+ init -> poll [label="进入while"];
+ {rank=same;uart;poll;}
+ device -> update [label="同一对象的私有状态", color="#ad6429", constraint=false];
+}

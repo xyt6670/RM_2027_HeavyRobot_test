@@ -153,117 +153,72 @@
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>motor_rx_count</ItemText>
+          <ItemText>g_remote_debug</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>motor_target_current_a</ItemText>
+          <ItemText>g_remote_debug.ch0_raw</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>motor_speed_rad_s</ItemText>
+          <ItemText>g_remote_debug.ch1_raw</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>motor_tx_error_count</ItemText>
+          <ItemText>g_remote_debug.ch0_centered</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>CAN1_0x200_Tx_Data</ItemText>
+          <ItemText>g_remote_debug.ch1_centered</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\Now_Omega_6020</ItemText>
+          <ItemText>g_remote_debug.ch0_normalized</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\Now_Current_6020</ItemText>
+          <ItemText>g_remote_debug.ch1_normalized</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\Now_Omega_3508</ItemText>
+          <ItemText>g_remote_debug.s1</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\Target_Omega_6020</ItemText>
+          <ItemText>g_remote_debug.s2</ItemText>
         </Ww>
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_6020.PID_Omega.K_P</ItemText>
+          <ItemText>g_remote_debug.online</ItemText>
         </Ww>
         <Ww>
           <count>10</count>
           <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_6020.PID_Omega.K_I</ItemText>
+          <ItemText>g_remote_debug.age_ms</ItemText>
         </Ww>
         <Ww>
           <count>11</count>
           <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_6020.PID_Omega.K_D</ItemText>
+          <ItemText>g_remote_debug.valid_frames</ItemText>
         </Ww>
         <Ww>
           <count>12</count>
           <WinNumber>1</WinNumber>
-          <ItemText>motor_6020_rx_count</ItemText>
+          <ItemText>g_remote_debug.timeout_count</ItemText>
         </Ww>
         <Ww>
           <count>13</count>
           <WinNumber>1</WinNumber>
-          <ItemText>motor_6020_online</ItemText>
-        </Ww>
-        <Ww>
-          <count>14</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>Target_Current_6020</ItemText>
-        </Ww>
-        <Ww>
-          <count>15</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/1_Middleware/1_Driver/CAN/drv_can.cpp\CAN1_0x2ff_Tx_Data</ItemText>
-        </Ww>
-        <Ww>
-          <count>16</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_6020.Feedforward_Voltage</ItemText>
-        </Ww>
-        <Ww>
-          <count>17</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_6020.Target_Voltage</ItemText>
-        </Ww>
-        <Ww>
-          <count>18</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_3508_online</ItemText>
-        </Ww>
-        <Ww>
-          <count>19</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_3508_rx_count</ItemText>
-        </Ww>
-        <Ww>
-          <count>20</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_3508.PID_Omega.K_P</ItemText>
-        </Ww>
-        <Ww>
-          <count>21</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_6020.PID_Current.K_P</ItemText>
-        </Ww>
-        <Ww>
-          <count>22</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>\\can_motor_test\../User/App/app_motor.cpp\motor_6020.PID_Current.K_I</ItemText>
+          <ItemText>UART3_Manage_Object</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -347,18 +302,7 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>1</GroupNumber>
-      <FileNumber>2</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/BSP/bsp_drv_can.h</PathWithFileName>
-      <FilenameWithoutPath>bsp_drv_can.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
+
     <File>
       <GroupNumber>1</GroupNumber>
       <FileNumber>3</FileNumber>
@@ -371,18 +315,7 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>1</GroupNumber>
-      <FileNumber>4</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/BSP/bsp_drv_uart.h</PathWithFileName>
-      <FilenameWithoutPath>bsp_drv_uart.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
+
   </Group>
   <Group>
     <GroupName>device</GroupName>
@@ -393,27 +326,16 @@
     <File>
       <GroupNumber>2</GroupNumber>
       <FileNumber>5</FileNumber>
-      <FileType>1</FileType>
+      <FileType>8</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>../User/Device/device_dr16.c</PathWithFileName>
-      <FilenameWithoutPath>device_dr16.c</FilenameWithoutPath>
+      <PathWithFileName>../User/Device/device_dr16.cpp</PathWithFileName>
+      <FilenameWithoutPath>device_dr16.cpp</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>2</GroupNumber>
-      <FileNumber>6</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/Device/device_dr16.h</PathWithFileName>
-      <FilenameWithoutPath>device_dr16.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
+
     <File>
       <GroupNumber>2</GroupNumber>
       <FileNumber>7</FileNumber>
@@ -426,18 +348,7 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>2</GroupNumber>
-      <FileNumber>8</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/Device/device_motor_dji.h</PathWithFileName>
-      <FilenameWithoutPath>device_motor_dji.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
+
     <File>
       <GroupNumber>2</GroupNumber>
       <FileNumber>9</FileNumber>
@@ -450,18 +361,7 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>2</GroupNumber>
-      <FileNumber>10</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/Device/device_motor_dm.h</PathWithFileName>
-      <FilenameWithoutPath>device_motor_dm.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
+
     <File>
       <GroupNumber>2</GroupNumber>
       <FileNumber>11</FileNumber>
@@ -474,18 +374,7 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>2</GroupNumber>
-      <FileNumber>12</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/Device/device_serialplot.h</PathWithFileName>
-      <FilenameWithoutPath>device_serialplot.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
+
   </Group>
   <Group>
     <GroupName>control</GroupName>
@@ -505,18 +394,7 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>3</GroupNumber>
-      <FileNumber>14</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/Control/control_chassis.h</PathWithFileName>
-      <FilenameWithoutPath>control_chassis.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
+
     <File>
       <GroupNumber>3</GroupNumber>
       <FileNumber>15</FileNumber>
@@ -529,18 +407,7 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>3</GroupNumber>
-      <FileNumber>16</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/Control/control_gimbal.h</PathWithFileName>
-      <FilenameWithoutPath>control_gimbal.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
+
     <File>
       <GroupNumber>3</GroupNumber>
       <FileNumber>17</FileNumber>
@@ -553,18 +420,7 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>3</GroupNumber>
-      <FileNumber>18</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/Control/control_shoot.h</PathWithFileName>
-      <FilenameWithoutPath>control_shoot.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
+
     <File>
       <GroupNumber>3</GroupNumber>
       <FileNumber>19</FileNumber>
@@ -577,18 +433,7 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>3</GroupNumber>
-      <FileNumber>20</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/Control/control_alg_pid.h</PathWithFileName>
-      <FilenameWithoutPath>control_alg_pid.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
+
     <File>
       <GroupNumber>3</GroupNumber>
       <FileNumber>21</FileNumber>
@@ -601,18 +446,7 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>3</GroupNumber>
-      <FileNumber>22</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/Control/control_alg_math.h</PathWithFileName>
-      <FilenameWithoutPath>control_alg_math.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
+
   </Group>
   <Group>
     <GroupName>app</GroupName>
@@ -632,42 +466,30 @@
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
-    <File>
-      <GroupNumber>4</GroupNumber>
-      <FileNumber>24</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/App/app_robot.h</PathWithFileName>
-      <FilenameWithoutPath>app_robot.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
+
     <File>
       <GroupNumber>4</GroupNumber>
       <FileNumber>25</FileNumber>
-      <FileType>1</FileType>
+      <FileType>8</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>../User/App/app_remote.c</PathWithFileName>
-      <FilenameWithoutPath>app_remote.c</FilenameWithoutPath>
+      <PathWithFileName>../User/App/app_remote.cpp</PathWithFileName>
+      <FilenameWithoutPath>app_remote.cpp</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
+
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>26</FileNumber>
-      <FileType>5</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>../User/App/app_remote.h</PathWithFileName>
-      <FilenameWithoutPath>app_remote.h</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
+      <FileNumber>53</FileNumber>
+      <FileType>8</FileType>
+      <tvExp>0</tvExp><tvExpOptDlg>0</tvExpOptDlg><bDave2>0</bDave2>
+      <PathWithFileName>../User/App/app_init.cpp</PathWithFileName>
+      <FilenameWithoutPath>app_init.cpp</FilenameWithoutPath>
+      <RteFlg>0</RteFlg><bShared>0</bShared>
     </File>
+
   </Group>
   <Group>
     <GroupName>CMSIS DSP dependencies</GroupName>
