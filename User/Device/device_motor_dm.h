@@ -56,6 +56,10 @@ enum Enum_Motor_DM_Control_Status_Normal
 {
     Motor_DM_Control_Status_DISABLE = 0x0,
     Motor_DM_Control_Status_ENABLE,
+    Motor_DM_Control_Status_MOTOR_POLES_UNIDENTIFIED = 0x2,
+    Motor_DM_Control_Status_OUTPUT_UNIDENTIFIED = 0x3,
+    Motor_DM_Control_Status_ENCODER_ERROR_1 = 0x5,
+    Motor_DM_Control_Status_ENCODER_ERROR_2 = 0x7,
     Motor_DM_Control_Status_OVERVOLTAGE = 0x8,
     Motor_DM_Control_Status_UNDERVOLTAGE,
     Motor_DM_Control_Status_OVERCURRENT,
@@ -164,6 +168,8 @@ struct Struct_Motor_DM_CAN_Tx_Data_Normal_EMIT
  */
 struct Struct_Motor_DM_Rx_Data_Normal
 {
+    uint32_t Last_Rx_ms;
+    bool Has_Feedback;
     Enum_Motor_DM_Control_Status_Normal Control_Status;
     float Now_Angle;
     float Now_Omega;
@@ -201,7 +207,7 @@ class Class_Motor_DM_Normal
 {
 public:
 
-    void Init(CAN_HandleTypeDef *hcan, uint8_t __CAN_Rx_ID, uint8_t __CAN_Tx_ID, Enum_Motor_DM_Control_Method __Motor_DM_Control_Method = Motor_DM_Control_Method_NORMAL_MIT, float __Angle_Max = 12.5f, float __Omega_Max = 25.0f, float __Torque_Max = 10.0f, float __Current_Max = 10.261194f);
+    void Init(CAN_HandleTypeDef *hcan, uint16_t __CAN_Rx_ID, uint16_t __CAN_Tx_ID, Enum_Motor_DM_Control_Method __Motor_DM_Control_Method = Motor_DM_Control_Method_NORMAL_MIT, float __Angle_Max = 12.5f, float __Omega_Max = 25.0f, float __Torque_Max = 10.0f, float __Current_Max = 10.261194f);
 
     inline float Get_Angle_Max();
 
@@ -252,6 +258,12 @@ public:
     inline void Set_K_D(float __K_D);
 
     void CAN_RxCpltCallback(uint8_t *Rx_Data);
+
+    /* Snapshot is copied in a short interrupt critical section. */
+    void GetSnapshot(Struct_Motor_DM_Rx_Data_Normal &out) const;
+    /* Explicit MIT send: no auto enable and no auto fault clearing. */
+    uint8_t CAN_Send_Control();
+    void CAN_Send_Read_Status();
 
     void CAN_Send_Clear_Error();
 
@@ -324,7 +336,7 @@ protected:
 
     // 内部函数
 
-    void Data_Process();
+    void Data_Process(const uint8_t *data);
 
     void Output();
 };

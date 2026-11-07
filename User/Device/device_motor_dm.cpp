@@ -193,7 +193,7 @@ uint8_t *allocate_tx_data(CAN_HandleTypeDef *hcan, Enum_Motor_DM_Motor_ID_1_To_4
  * @param __Omega_Max 最大速度, 与上位机控制幅值VMAX保持一致, 传统模式有效
  * @param __Torque_Max 最大扭矩, 与上位机控制幅值TMAX保持一致, 传统模式有效
  */
-void Class_Motor_DM_Normal::Init(CAN_HandleTypeDef *hcan, uint8_t __CAN_Rx_ID, uint8_t __CAN_Tx_ID, Enum_Motor_DM_Control_Method __Motor_DM_Control_Method, float __Angle_Max, float __Omega_Max, float __Torque_Max, float __Current_Max)
+void Class_Motor_DM_Normal::Init(CAN_HandleTypeDef *hcan, uint16_t __CAN_Rx_ID, uint16_t __CAN_Tx_ID, Enum_Motor_DM_Control_Method __Motor_DM_Control_Method, float __Angle_Max, float __Omega_Max, float __Torque_Max, float __Current_Max)
 {
     if (hcan->Instance == CAN1)
     {
@@ -204,6 +204,8 @@ void Class_Motor_DM_Normal::Init(CAN_HandleTypeDef *hcan, uint8_t __CAN_Rx_ID, u
         CAN_Manage_Object = &CAN2_Manage_Object;
     }
 
+    memset(&Rx_Data, 0, sizeof(Rx_Data));
+    Flag = Pre_Flag = 0U;
     CAN_Rx_ID = __CAN_Rx_ID;
     switch (__Motor_DM_Control_Method)
     {
@@ -240,12 +242,61 @@ void Class_Motor_DM_Normal::Init(CAN_HandleTypeDef *hcan, uint8_t __CAN_Rx_ID, u
  *
  * @param Rx_Data 接收的数据
  */
-void Class_Motor_DM_Normal::CAN_RxCpltCallback(uint8_t *Rx_Data)
+void Class_Motor_DM_Normal::CAN_RxCpltCallback(uint8_t *data)
 {
-    // 滑动窗口, 判断电机是否在线
-    Flag += 1;
+    if (data == nullptr || (data[0] & 0x0fU) != (CAN_Tx_ID & 0x0fU)) return;
+    uint8_t status = data[0] >> 4;
+    // Fault reports are valid feedback too; Control decides whether motion is allowed.
+    if (status != 0U && status != 1U && status != 2U && status != 3U &&
+        status != 5U && status != 7U && (status < 8U || status > 14U)) return;
+    Data_Process(data);
+    ++Flag;
+    Rx_Data.Last_Rx_ms = HAL_GetTick();
+    Rx_Data.Has_Feedback = true;
+}
 
-    Data_Process();
+void Class_Motor_DM_Normal::GetSnapshot(Struct_Motor_DM_Rx_Data_Normal &out) const
+{
+    uint32_t mask = __get_PRIMASK();
+    __disable_irq();
+    out = Rx_Data;
+    __set_PRIMASK(mask);
+}
+
+void Class_Motor_DM_Normal::CAN_Send_Read_Status()
+{
+    uint8_t request[4] = {(uint8_t)CAN_Tx_ID, (uint8_t)(CAN_Tx_ID >> 8), 0xcc, 0x00};
+    CAN_Send_Data(CAN_Manage_Object->CAN_Handler, 0x7ff, request, 4);
+}
+
+uint8_t Class_Motor_DM_Normal::CAN_Send_Control()
+{
+    if (Motor_DM_Control_Method != Motor_DM_Control_Method_NORMAL_MIT ||
+        !Rx_Data.Has_Feedback || Rx_Data.Control_Status != Motor_DM_Control_Status_ENABLE)
+        return HAL_ERROR;
+    // Reject NaN before float-to-integer conversion.
+    if (Control_Angle != Control_Angle || Control_Omega != Control_Omega ||
+        Control_Torque != Control_Torque || K_P != K_P || K_D != K_D)
+        return HAL_ERROR;
+    Math_Constrain(&Control_Angle, -Angle_Max, Angle_Max);
+    Math_Constrain(&Control_Omega, -Omega_Max, Omega_Max);
+    Math_Constrain(&Control_Torque, -Torque_Max, Torque_Max);
+    Math_Constrain(&K_P, 0.0f, 500.0f);
+    Math_Constrain(&K_D, 0.0f, 5.0f);
+    uint16_t p = Math_Float_To_Int(Control_Angle, -Angle_Max, Angle_Max, 0, 65535);
+    uint16_t v = Math_Float_To_Int(Control_Omega, -Omega_Max, Omega_Max, 0, 4095);
+    uint16_t t = Math_Float_To_Int(Control_Torque, -Torque_Max, Torque_Max, 0, 4095);
+    uint16_t kp = Math_Float_To_Int(K_P, 0.0f, 500.0f, 0, 4095);
+    uint16_t kd = Math_Float_To_Int(K_D, 0.0f, 5.0f, 0, 4095);
+    Tx_Data[0] = p >> 8;
+    Tx_Data[1] = p & 0xff;
+    Tx_Data[2] = v >> 4;
+    Tx_Data[3] = ((v & 0x0f) << 4) | (kp >> 8);
+    Tx_Data[4] = kp & 0xff;
+    Tx_Data[5] = kd >> 4;
+    Tx_Data[6] = ((kd & 0x0f) << 4) | (t >> 8);
+    Tx_Data[7] = t & 0xff;
+    return CAN_Send_Data(CAN_Manage_Object->CAN_Handler, CAN_Tx_ID, Tx_Data, 8);
 }
 
 /**
@@ -344,12 +395,12 @@ void Class_Motor_DM_Normal::TIM_Send_PeriodElapsedCallback()
  * @brief 数据处理过程
  *
  */
-void Class_Motor_DM_Normal::Data_Process()
+void Class_Motor_DM_Normal::Data_Process(const uint8_t *data)
 {
     // 数据处理过程
     int32_t delta_encoder;
     uint16_t tmp_encoder, tmp_omega, tmp_torque;
-    Struct_Motor_DM_CAN_Rx_Data_Normal *tmp_buffer = (Struct_Motor_DM_CAN_Rx_Data_Normal *)CAN_Manage_Object->Rx_Buffer.Data;
+    const Struct_Motor_DM_CAN_Rx_Data_Normal *tmp_buffer = (const Struct_Motor_DM_CAN_Rx_Data_Normal *)data;
 
     // 电机ID不匹配, 则不进行处理
     if(tmp_buffer->CAN_ID != (CAN_Tx_ID & 0x0f))
@@ -358,14 +409,14 @@ void Class_Motor_DM_Normal::Data_Process()
     }
 
     // 处理大小端
-    Math_Endian_Reverse_16((void *)&tmp_buffer->Angle_Reverse, &tmp_encoder);
+    tmp_encoder = ((uint16_t)data[1] << 8) | data[2];
     tmp_omega = (tmp_buffer->Omega_11_4 << 4) | (tmp_buffer->Omega_3_0_Torque_11_8 >> 4);
     tmp_torque = ((tmp_buffer->Omega_3_0_Torque_11_8 & 0x0f) << 8) | (tmp_buffer->Torque_7_0);
 
     Rx_Data.Control_Status = static_cast<Enum_Motor_DM_Control_Status_Normal>(tmp_buffer->Control_Status_Enum);
 
     // 计算圈数与总角度值
-    delta_encoder = tmp_encoder - Rx_Data.Pre_Encoder;
+    delta_encoder = Rx_Data.Has_Feedback ? (int32_t)tmp_encoder - (int32_t)Rx_Data.Pre_Encoder : 0;
     if (delta_encoder < -(1 << 15))
     {
         // 正方向转过了一圈
@@ -379,9 +430,9 @@ void Class_Motor_DM_Normal::Data_Process()
     Rx_Data.Total_Encoder = Rx_Data.Total_Round * (1 << 16) + tmp_encoder - ((1 << 15) - 1);
 
     // 计算电机本身信息
-    Rx_Data.Now_Angle = (float)(Rx_Data.Total_Encoder) / (float)((1 << 16) - 1) * Angle_Max * 2.0f;
-    Rx_Data.Now_Omega = Math_Int_To_Float(tmp_omega, 0x7ff, (1 << 12) - 1, 0, Omega_Max);
-    Rx_Data.Now_Torque = Math_Int_To_Float(tmp_torque, 0x7ff, (1 << 12) - 1, 0, Torque_Max);
+    Rx_Data.Now_Angle = Math_Int_To_Float(tmp_encoder, 0, 65535, -Angle_Max, Angle_Max) + Rx_Data.Total_Round * 2.0f * Angle_Max;
+    Rx_Data.Now_Omega = Math_Int_To_Float(tmp_omega, 0, 4095, -Omega_Max, Omega_Max);
+    Rx_Data.Now_Torque = Math_Int_To_Float(tmp_torque, 0, 4095, -Torque_Max, Torque_Max);
     Rx_Data.Now_MOS_Temperature = tmp_buffer->MOS_Temperature + CELSIUS_TO_KELVIN;
     Rx_Data.Now_Rotor_Temperature = tmp_buffer->Rotor_Temperature + CELSIUS_TO_KELVIN;
 
@@ -400,25 +451,7 @@ void Class_Motor_DM_Normal::Output()
     {
     case (Motor_DM_Control_Method_NORMAL_MIT):
     {
-        Struct_Motor_DM_CAN_Tx_Data_Normal_MIT *tmp_buffer = (Struct_Motor_DM_CAN_Tx_Data_Normal_MIT *)Tx_Data;
-
-        uint16_t tmp_angle, tmp_omega, tmp_torque, tmp_k_p, tmp_k_d;
-
-        tmp_angle = Math_Float_To_Int(Control_Angle, 0, Angle_Max, 0x7fff, (1 << 16) - 1);
-        tmp_omega = Math_Float_To_Int(Control_Omega, 0, Omega_Max, 0x7ff, (1 << 12) - 1);
-        tmp_torque = Math_Float_To_Int(Control_Torque, 0, Torque_Max, 0x7ff, (1 << 12) - 1);
-        tmp_k_p = Math_Float_To_Int(K_P, 0, 500.0f, 0, (1 << 12) - 1);
-        tmp_k_d = Math_Float_To_Int(K_D, 0, 5.0f, 0, (1 << 12) - 1);
-
-        tmp_buffer->Control_Angle_Reverse = Math_Endian_Reverse_16(&tmp_angle, nullptr);
-        tmp_buffer->Control_Omega_11_4 = tmp_omega >> 4;
-        tmp_buffer->Control_Omega_3_0_K_P_11_8 = ((tmp_omega & 0x0f) << 4) | (tmp_k_p >> 8);
-        tmp_buffer->K_P_7_0 = tmp_k_p & 0xff;
-        tmp_buffer->K_D_11_4 = tmp_k_d >> 4;
-        tmp_buffer->K_D_3_0_Control_Torque_11_8 = ((tmp_k_d & 0x0f) << 4) | (tmp_torque >> 8);
-        tmp_buffer->Control_Torque_7_0 = tmp_torque & 0xff;
-
-        CAN_Send_Data(CAN_Manage_Object->CAN_Handler, CAN_Tx_ID, Tx_Data, 8);
+        (void)CAN_Send_Control();
 
         break;
     }

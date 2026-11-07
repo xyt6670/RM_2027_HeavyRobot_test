@@ -1,9 +1,9 @@
-# 主机端DR16接收链测试
+# DR16 → 小yaw主机测试
 
-运行 `python tests/remote_input/run_tests.py`，需要PATH中有本机GCC/G++。测试编译真实 `Class_DR16`、`app_init`、`app_remote`、`app_robot` 和中科大UART BSP，用stubs替代HAL和串口外设。输出位于已忽略的 `Build/remote_tests`，不向工程里生成固件源文件。
+运行 `python tests/remote_input/run_tests.py`，需要PATH中有GCC/G++。不加入Keil工程，不烧录，不控制实物电机。
 
-覆盖：初始化和真实函数指针桥、通道/拨杆/鼠标/键码解析、坏长度与坏帧不刷新有效时间、100ms掉线边界、重连、Tick回绕、HT忽略、TC两帧、UART后台恢复、BUSY_RX不重复重启、返回快照独立性、临界区恢复原PRIMASK、Update在临界区内取时间，以及无发送。
+编译真实DR16、DM Normal、App、Gimbal、数学/PID库、UART BSP。替身仅提供HAL、CAN提交和用于主机编译的CMSIS接口。CAN BSP自身的硬件初始化和STM32实际中断不在本测试范围内。
 
-测试中的本地Class实例用于独立验证协议和状态；App的静态设备对象不通过测试专用getter暴露。端到端App测试把字节放进UART BSP实际接收缓存，再触发HAL接收事件。
+覆盖协议字段与边界、18/36字节接收、无效帧不续期、100ms掉线、时间回绕、快照和原中断状态恢复、DMA HT忽略与接收恢复、MIT字节编码端点、回调数据独立于BSP共享缓存、首次角度反馈、启动允许、位置积分/保持/限位、反馈超时、使能超时、故障不自动清除、CAN提交失败停止，以及通信恢复不直接运行。
 
-这些测试不加入Keil固件；通过不代表波形、100k 8E1、板载反相、真实DMA时序、接线或对频已经验收。硬件仍须按本次练习说明上板验证。
+结果在Build/remote_tests/result.json。主机编译器日志在同目录compiler.log；对原有DM/数学库的已有switch、枚举比较、未用参数、符号比较告警保留提示，App和新Control仍按-Werror编译。主机测试通过不等于台架通过。

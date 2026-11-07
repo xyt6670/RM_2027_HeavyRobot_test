@@ -12,6 +12,12 @@ typedef struct {
     uint32_t RxState;
     uint32_t ErrorCode;
 } UART_HandleTypeDef;
+typedef struct { void *Instance; } CAN_HandleTypeDef;
+typedef struct { uint32_t StdId, IDE, RTR, DLC; } CAN_RxHeaderTypeDef;
+#define CAN1 ((void *)(uintptr_t)11)
+#define CAN2 ((void *)(uintptr_t)12)
+#define CAN_ID_STD 0U
+#define CAN_RTR_DATA 0U
 typedef uint32_t HAL_UART_RxEventTypeTypeDef;
 #define USART1 ((void *)(uintptr_t)1)
 #define USART2 ((void *)(uintptr_t)2)

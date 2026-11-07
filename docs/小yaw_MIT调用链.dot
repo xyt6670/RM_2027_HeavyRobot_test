@@ -1,0 +1,27 @@
+digraph yaw {
+  graph [rankdir=TB, bgcolor="white", pad="0.3", nodesep="0.35", ranksep="0.5", fontname="Microsoft YaHei"];
+  node [shape=box, style="rounded,filled", fillcolor="#f4f7fb", color="#899bb0", fontname="Microsoft YaHei", fontsize=13, width=6.5, margin="0.25,0.16"];
+  edge [fontname="Microsoft YaHei", fontsize=11, color="#536b82", arrowsize=0.7];
+  init [label="App / app_init.cpp\nremote、yaw_motor各定义一次\n初始化对象 → 绑定依赖 → 开启CAN/UART接收",fillcolor="#e1ecff"];
+  uart [label="BSP / UART接收\nUSART3：IDLE 或 DMA：TC\n→ Remote_RxCallback"];
+  dr16 [label="Device / Class_DR16\n解析18字节帧、记录有效帧时间\nUpdate检测掉线\nGetSnapshot短临界区复制"];
+  app [label="App / app_remote.cpp\nch0去中值、死区、归一化\ns1允许 + 在线 → Gimbal_Command\n{ enabled, yaw_rate_rad_s }",fillcolor="#e1ecff"];
+  poll [label="App / app_robot.cpp\n主循环每2ms调度\n先映射输入，再调用Control",fillcolor="#e1ecff"];
+  ctrl [label="Control / control_gimbal.cpp\n读取反馈 → 允许/使能/故障处理\n速度×dt积分位置 → 限位\n更新电机目标 → 直接调用发送",fillcolor="#e1f2e8"];
+  motor [label="Device / Class_Motor_DM_Normal\nSet_*更新对象，不发报文\nCAN_Send_Control编码MIT八字节\n使能/失能/读状态由Control决定"];
+  can_tx [label="BSP / CAN_Send_Data\nHAL_CAN_AddTxMessage → CAN1"];
+  actual [label="4310驱动内部MIT控制\n位置误差×Kp + 速度误差×Kd + 前馈力矩\n→ 内部电流环 → 电机",fillcolor="#fff2d8"];
+  can_rx [label="BSP / CAN1反馈中断\nYaw_CAN_RxCallback检查反馈ID和DLC\n→ 同一个yaw_motor.CAN_RxCpltCallback"];
+  feedback [label="Device / 电机反馈\n角度、速度、状态、时间戳\nGetSnapshot短临界区复制"];
+  init -> uart [label="UART_Init传回调"];
+  init -> can_rx [label="CAN_Init传回调"];
+  init -> ctrl [label="传电机引用与配置",style=dashed];
+  uart -> dr16 [label="字节"];
+  dr16 -> app [label="数据与在线状态快照"];
+  poll -> app [label="调用",style=dashed];
+  app -> ctrl [label="普通命令结构体"];
+  ctrl -> motor [label="直接调用class"];
+  motor -> can_tx -> actual;
+  actual -> can_rx [label="反馈帧"];
+  can_rx -> feedback -> ctrl [label="反馈快照"];
+}

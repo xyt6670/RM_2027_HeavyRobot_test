@@ -1,28 +1,29 @@
 # 2027重装电控练习工程
 
-基于8a2aa35练习C板DT7＋DR16输入。当前已编写USART3接收、Class_DR16解析/掉线检测及通道0/1映射，初始化集中在app_init。无Service、无RTOS，未接入电机控制；实物接收仍需上板验收。
+当前练习：C板 + DT7/DR16通道0 + 达妙4310小yaw，裸机运行，不加Service、注册表、消息中心或RTOS。本轮基于已经提交的 `24f84cb` 继续修改，尚未提交、未烧录。
 
-先读：[DR16类练习：实际调用链与Keil验收](docs/DR16类练习_调用链与验收.md)。本轮尚未提交，提交名由用户决定。
+先读：[小yaw MIT练习：使用与调用链](docs/小yaw_MIT练习.md)，再看[调用链图](docs/小yaw_MIT调用链.svg)。
+
+现场排查：[C板CAN排查顺序与本次USART3修复](docs/C板CAN排查顺序.md)。
 
 ```text
 User/
-  BSP/       bsp_drv_can、bsp_drv_uart
-  Device/    device_dr16、device_motor_dji、device_motor_dm、device_serialplot
-  Control/   control_chassis、control_gimbal、control_shoot、control_alg_pid、control_alg_math
-  App/       app_init.cpp、app_robot.c、app_remote.cpp
-Core/        CubeMX生成的外设初始化和中断入口
-Drivers/     HAL、CMSIS及DSP依赖
-MDK-ARM/     Keil工程、启动文件与工具配置
-Build/       编译输出和日志（不提交Git）
-docs/        分层、开发顺序与DR16接入状态
+  BSP/       bsp_drv_can、bsp_drv_uart：通信收发
+  Device/    device_dr16、device_motor_dm：设备数据和协议
+  Control/   control_gimbal.cpp：小yaw接管、积分、限位和发送
+  App/       app_init.cpp：对象与初始化；app_remote.cpp：输入映射
+             app_robot.cpp：2ms调度；app_config.h：练习参数
+Core/        CubeMX生成的初始化和中断入口
+Drivers/     HAL、CMSIS、DSP
+MDK-ARM/     Keil工程
+Build/       编译产物、测试报告，不提交Git
+docs/        阅读说明
 ```
 
-- 打开Keil：[MDK-ARM/can_motor_test.uvprojx](MDK-ARM/can_motor_test.uvprojx)。工程和.ioc暂保留原来的can_motor_test名称，避免无关工具配置改动。
-- 阅读：[目录、命名与开发顺序](docs/工程结构与开发顺序.md)。
-- 阅读：[裸机App职责与DR16接入现状](docs/裸机App与DR16接入.md)。
-- 程序入口：`main.c → App_Init`；主循环`UART_Poll → App_Robot_Poll(now_ms)`。
-- 旧演示应用app_motor已移除，不再恢复；RTOS未加入。
+操作：首次上电/遥控断线恢复后，s1先下挡且通道0回中，再切上挡运行；中挡或下挡失能。推通道0改变位置目标，回中保持位置。默认练习范围为首次有效电机反馈位置左右0.35rad，不自动保存电机零点。
 
-电机类和Control骨架保持原样。DR16由旧C解析模块整理为device_dr16.cpp中的Class_DR16；app_remote使用对象引用，因此改为.cpp。Keil的app组已加入app_init.cpp/.h，并同步更新两个改名源文件；重新加载工程后再Build。
+编译前重新加载 [Keil工程](MDK-ARM/can_motor_test.uvprojx)，防止旧窗口覆盖修改。分组只列源文件；头文件保留在磁盘并照常参与编译。
 
-旧备份、过往说明与编译日志已移到工作区同级的`_工程归档/RM_2027_HeavyRobot_test/layout_20261028_140338/`，其中snapshot保存本轮整理前的源码与工程配置，rename_map.json记录全部重命名。
+默认CAN1，控制ID `0x01`、反馈ID `0x11`，1Mbps、MIT模式，P/V/T映射范围12.5/30/10。**这些是待核对的练习参数，不是对实际电机配置的确认。** 接线、驱动版本、模式、映射范围和电机内部通信超时需按说明核对后上板。
+
+旧的DR16观察练习及其验收文档属于上一个阶段；`g_remote_debug`已移除，DR16接收、解析、快照和100ms掉线检测仍保留。DJI电机库保留但本练习不调用。
